@@ -53,7 +53,9 @@ const Th = styled.th`
     text-transform:capitalize;
 `
 
+const Title = styled.h2`
 
+`
 
 
 const Disponible = () => {
@@ -92,6 +94,7 @@ const Disponible = () => {
                 <Search onChange={e => handleChange(e)} value={query}/>
                 <SearchButton><SearchIcon /></SearchButton>
             </SearchContainer>
+            <Title>Productos disponibles</Title>
             <TableContainer>
                 <Table className="table table-hover">
                     <thead>

@@ -37,7 +37,23 @@ router.get('/ordenes', async (req, res) => {
     } catch(err) { res.status(500).json(err)}
 })
 
+//Fetch ordenes por despachar
+
+router.get('/ordenes/por-despachar', async (req, res) => {
+    try {   
+        const ordenes = await Orden.find({'status':'Pendiente'});
+        res.status(200).json(ordenes);
+    } catch(err) { res.status(500).json(err)}
+})
 
 
+//Fetch ordenes despachadas
+
+router.get('/ordenes/despachado', async (req, res) => {
+    try {   
+        const ordenes = await Orden.find({'status':'Despachado'});
+        res.status(200).json(ordenes);
+    } catch(err) { res.status(500).json(err)}
+})
 
 module.exports = router;

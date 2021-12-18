@@ -7,11 +7,13 @@ const Container = styled.div`
 
 `
 
+
+
 const Dashboard = () => {
     return (
      <Container>
-         <Navbar />
-         <Disponible/>
+        <Navbar />
+        <Disponible/>
      </Container>
     )
 }

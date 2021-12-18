@@ -8,7 +8,11 @@ const OrdenSchema = new mongoose.Schema(
         productos: [{
             producto: Materia.MateriaSchema,
             cantidad: Number
-        }]
+        }],
+        status:{
+            type:String,
+            default: 'Pendiente'
+        }
     },
     {timestamps: true}
 );

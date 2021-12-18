@@ -74,7 +74,8 @@ const Panel = () => {
                 </Card>
                 <Card color='#20A3B7'>
                     <CardContent>
-                        <CardTitle id='venta'>Reportes de venta</CardTitle>
+                    <CardTitle>{nOrdenes.porDespachar+nOrdenes.despachados}</CardTitle>
+                    <CardDesc>Pedidos totales</CardDesc>
                     </CardContent>
                 </Card>
             </CardContainer>

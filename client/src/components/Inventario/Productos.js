@@ -58,6 +58,7 @@ const Td = styled.td`
 const Th = styled.th`
     text-align:center;
     text-transform:capitalize;
+    width: 150px;
 `
 
 
@@ -111,7 +112,7 @@ const Productos = () => {
                 <Td>{materia.amount}</Td>
                 <Td>{materia.price}</Td>
                 <Td>
-                    <Button id={materia._id} onClick={ e => handleEdit(e)}><ModeEditIcon onClick={ e => handleEdit(e)}/></Button>
+                    <Button id={materia._id} onClick={ e => handleEdit(e)}><ModeEditIcon /></Button>
                     <Button id={materia._id} onClick={e => handleClick(e)}><DeleteIcon onClick={e => handleClick(e)}/></Button>
                 </Td>
             </tr>
