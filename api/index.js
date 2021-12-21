@@ -89,14 +89,22 @@ app.get('/api/auth/logout', (req, res) => {
         } catch(err) { res.status(500).json(err)}
 })
 
+app.get('/', (req, res) => {
+        res.send('Bienvenido a la API de adidas');
+})
+
 
 app.use('/api/inventario', inventarioRoute)
 app.use('/api/produccion', produccionRoute)
 
 
+if (process.env.NODE_ENV === 'production'){
+        app.use(express.static('../client/build'))
+}
 
+PORT = process.env.PORT || 5000;
 
-app.listen(process.env.PORT || 8080, () => console.log(`Backend corriendo en el puerto ${process.env.PORT}`));
+app.listen(PORT, () => console.log(`Backend corriendo en el puerto ${PORT}`));
 
 module.exports = User;
 
