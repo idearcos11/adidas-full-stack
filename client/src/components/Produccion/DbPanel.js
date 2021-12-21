@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import * as api from '../../api/Produccion';
-
+import {Link} from 'react-router-dom';
 
 const Container = styled.div`
 
@@ -48,9 +48,11 @@ const Panel = () => {
 
     const getOrdenes = async () => {
         try{
-            const res = await api.fetchOrdenes()
-            const porDespachar = res.data.length;
-            setnOrdenes({porDespachar:porDespachar,despachados:0});
+            const res1 = await api.despachado();
+            const res2 = await api.porDespachar();
+            const despachado = res1.data.length;
+            const porDespachar = res2.data.length;
+            setnOrdenes({porDespachar:porDespachar,despachados:despachado});
         } catch (err){console.log(err)}        
     }
     
@@ -60,24 +62,30 @@ const Panel = () => {
     return (
         <Container>
             <CardContainer>
-                <Card color='#7652F2'>
-                    <CardContent>
-                        <CardTitle>{nOrdenes.despachados}</CardTitle>
-                        <CardDesc>Pedidos despachados</CardDesc>
-                    </CardContent>
-                </Card>
-                <Card color='#EC255A'>
-                    <CardContent>
-                        <CardTitle>{nOrdenes.porDespachar}</CardTitle>
-                        <CardDesc>Pedidos por despachar</CardDesc>
-                    </CardContent>
-                </Card>
-                <Card color='#20A3B7'>
-                    <CardContent>
-                    <CardTitle>{nOrdenes.porDespachar+nOrdenes.despachados}</CardTitle>
-                    <CardDesc>Pedidos totales</CardDesc>
-                    </CardContent>
-                </Card>
+                <Link to='/despachado' style={{ textDecoration: 'none' }}>
+                    <Card color='#7652F2'>
+                        <CardContent>
+                            <CardTitle>{nOrdenes.despachados}</CardTitle>
+                            <CardDesc>Pedidos despachados</CardDesc>
+                        </CardContent>
+                    </Card>
+                </Link>
+                <Link to='/adespachar' style={{ textDecoration: 'none' }}>
+                    <Card color='#EC255A'>
+                        <CardContent>
+                            <CardTitle>{nOrdenes.porDespachar}</CardTitle>
+                            <CardDesc>Pedidos por despachar</CardDesc>
+                        </CardContent>
+                    </Card>
+                </Link>
+                <Link to='/ordenes' style={{ textDecoration: 'none' }}>
+                    <Card color='#20A3B7'>
+                        <CardContent>
+                        <CardTitle>{nOrdenes.porDespachar+nOrdenes.despachados}</CardTitle>
+                        <CardDesc>Pedidos totales</CardDesc>
+                        </CardContent>
+                    </Card>
+                </Link>
             </CardContainer>
         </Container>
     )

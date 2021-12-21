@@ -58,8 +58,9 @@ const Form = () => {
         e.preventDefault();          
         let seleccionados = [];
 
-        panel.forEach( async element=>{
-        
+
+
+        for (const element of panel ) {
             try{   
                 const res = await api.fetchMateria(element._id);
                 const cantidad = element.cantidad;  
@@ -68,11 +69,14 @@ const Form = () => {
                 const vendidos = res.data.sold + cantidad;
                 await api.updateMateria(element._id,{sold:vendidos, amount:disponible});
                 seleccionados.push(carrito);
+                console.log(seleccionados)
             } catch(err) {console.log(err)}
-        })
+        }
+
 
 
         const postData = {titulo:info.title, desc:info.desc, productos: seleccionados};
+        console.log(postData);
         try{
             await api.createOrden(postData)
         } catch(err) {console.log(err)}

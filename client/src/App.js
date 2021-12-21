@@ -11,21 +11,37 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Redirect,
+  Navigate,
 } from "react-router-dom";
 import { useSelector } from 'react-redux';
+import Orden from './pages/Produccion/Orden';
 
 
 
 function App() {
-  console.log(useSelector(state => state.user)); 
+
+  const currentUser = useSelector(state => state.user.currentUser.currentUser); 
+  console.log(currentUser);
   
+  if(currentUser){
+    console.log('hay usuario');
+  } else {
+    console.log('no hay usuario')
+  }
+
   return (
     <Router>
       <Routes>
-        <Route exact path='/' element={<Login />} />
-        <Route exact path='/dashboard' element={<DashboardInv />} />
-        
+        <Route exact path='/' element={currentUser ? <Navigate to='/dashboard' /> : <Login />} />
+        <Route path='/login' element={currentUser ? <Navigate to='/dashboard' /> : <Login />} />
+        <Route path='/dashboard' element={currentUser? (currentUser.role ==='inventario'? <DashboardInv /> :<DashboardProd />)  : <Login />}/>
+        <Route path='/crear' element={currentUser? (currentUser.role ==='inventario'? <CrearMateria /> :<CrearOrden />)  : <Login />} />
+        <Route path='/reporte' element={currentUser? (currentUser.role ==='inventario'? <Reporte /> :<Navigate to='/404' />)  : <Login />} />
+        <Route path='/despachado' element={currentUser? (currentUser.role ==='produccion'? <Despachado /> :<Navigate to='/404' />)  : <Login />} />
+        <Route path='/adespachar' element={currentUser? (currentUser.role ==='produccion'? <PorDespachar /> :<Navigate to='/404' />)  : <Login />} />
+        <Route path='/ordenes' element={currentUser? (currentUser.role ==='produccion'? <Ordenes /> :<Navigate to='/404' />)  : <Login />} />
+        <Route path='/ordenes/:id' element={currentUser? (currentUser.role ==='produccion'? <Orden /> :<Navigate to='/404' />)  : <Login />} />
+        <Route path='/404' element={<h1>No estas autorizado</h1>} />
       </Routes>
     </Router>
   );

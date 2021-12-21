@@ -1,7 +1,7 @@
 import styled from "styled-components"
 import * as api from '../../api/Produccion';
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 const Container = styled.div`
     display: flex;
     flex-direction:column;
@@ -68,18 +68,29 @@ const Despachado = () => {
 
     const [ordenes, setOrdenes] = useState([]);
     const [query, setQuery] = useState('');
-    
+    const [filteredOrdenes, setFilteredOrdenes] = useState([]);
     
 
 
     const getOrdenes = async () => {
         try{
-            const res = await api.ordenesDespachadas();
+            const res = await api.despachado();
             setOrdenes(res.data);
         } catch (err){console.log(err)}
     }
 
     getOrdenes();
+
+    const getFilteredOrdenes = async () => {
+        try{
+            const res = await api.filteredDespachado(query);
+            setFilteredOrdenes(res.data);
+        } catch (err){console.log(err)}
+    }
+
+    useEffect(() => {
+        getFilteredOrdenes()
+    }, [query])
 
 
     const mapping = (orden) => {
@@ -89,7 +100,7 @@ const Despachado = () => {
                 <Td>{orden.titulo}</Td>
                 <Td>{orden.status}</Td>
                 <Td>{orden.createdAt.slice(0,10)}</Td>
-                <Td><Button className="btn btn-primary" id={orden._id}>Ver orden</Button></Td>
+                <Td><Link to={`/ordenes/${orden._id}`}><Button className="btn btn-primary" id={orden._id}>Ver</Button></Link></Td>
             </Tr>
         )
     }
@@ -117,7 +128,7 @@ const Despachado = () => {
                         </Tr>
                     </thead>
                     <tbody>
-                        {ordenes.map(mapping)}                        
+                        {query? filteredOrdenes.map(mapping) : ordenes.map(mapping)}                       
                     </tbody>
                 </Table>   
             </TableContainer>   

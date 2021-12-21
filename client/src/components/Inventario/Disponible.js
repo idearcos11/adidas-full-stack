@@ -62,18 +62,29 @@ const Disponible = () => {
 
     const [materias, setMaterias] = useState([]);
     const [query, setQuery] = useState('');
-    
+    const [filteredMaterias, setFilteredMaterias] = useState([]);
 
 
 
     const getMaterias = async () => {
         try{
-            const res = await api.fetchMaterias();
+            const res = await api.fetchMaterias(query);
             setMaterias(res.data);
         } catch (err){console.log(err)}
     }
 
     getMaterias();
+
+    const getFilteredMaterias = async () => {
+        try{
+            const res = await api.fetchFilteredMaterias(query);
+            setFilteredMaterias(res.data);
+        } catch (err){console.log(err)}
+    }
+
+    useEffect(() => {
+        getFilteredMaterias();
+    }, [query])
 
     const mapping = (materia) => {
         return(
@@ -85,32 +96,37 @@ const Disponible = () => {
         )
     }
 
-    const handleChange = e => setQuery(e.target.value);
+    const handleChange = e => {
+        setQuery(e.target.value)
+        console.log(query);
+    };
 
 
     return (
-        <Container>
-            <SearchContainer>
-                <Search onChange={e => handleChange(e)} value={query}/>
-                <SearchButton><SearchIcon /></SearchButton>
-            </SearchContainer>
-            <Title>Productos disponibles</Title>
-            <TableContainer>
-                <Table className="table table-hover">
-                    <thead>
-                        <tr>
-                            <Th scope="col">Nombre</Th>
-                            <Th scope="col">Descripcion</Th>
-                            <Th scope="col">Cantidad</Th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {materias.map(mapping)}
-                    </tbody>
-                </Table>
-            </TableContainer>
-        </Container>
+        <div>
+            <Container>
+                <SearchContainer>
+                    <Search onChange={e => handleChange(e)} value={query}/>
+                    <SearchButton><SearchIcon /></SearchButton>
+                </SearchContainer>
+                <Title>Productos disponibles</Title>
+                <TableContainer>
+                    <Table className="table table-hover">
+                        <thead>
+                            <tr>
+                                <Th scope="col">Nombre</Th>
+                                <Th scope="col">Descripcion</Th>
+                                <Th scope="col">Cantidad</Th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {query? filteredMaterias.map(mapping) : materias.map(mapping)}
+                        </tbody>
+                    </Table>
+                </TableContainer>
+            </Container>
+        </div>
     )
 }
 
-export default Disponible
+export default Disponible;

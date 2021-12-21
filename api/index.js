@@ -82,8 +82,11 @@ app.post("/api/auth/login", function(req, res){
 });
 
 
-app.get('/logout', (req, res) => {
-        req.logout();
+app.get('/api/auth/logout', (req, res) => {
+        try{
+                req.logout();
+                res.status(200).json(req.user)
+        } catch(err) { res.status(500).json(err)}
 })
 
 

@@ -1,29 +1,50 @@
-import { useState } from "react";
 import styled from "styled-components";
+import adidasOffice from '../images/adidas-office.jpg';
+import { useState } from "react";
 import { login } from "../api/Login";
 import { login as loginRedux } from "../redux/reducers/userRedux";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch} from "react-redux";
 
 const Container = styled.div`
     display: flex;
-    justify-content: center;
-    align-items: center;
+`
+
+const BgPhoto = styled.div`
+    background: url(${adidasOffice});
+    width:50%;
     height:100vh;
-`
-const LoginForm = styled.form`
+    filter: brightness(50%);
+` 
+
+const LoginContainer = styled.div`
+    width: 50%;
     display: flex;
-    flex-direction: column;
-    gap: 10px;
 `
 
-const Input = styled.input`
-
+const LoginForm= styled.form`
+    margin: auto;
+    justify-content: center;
 `
+
+const LoginInput = styled.input`
+    margin:15px auto;
+    width:300px;
+    height:30px;
+    padding: 1rem;
+`
+
 const LoginButton = styled.button`
-
+    display: block;
+    margin: 30px auto;
 `
 
-const Login = (props) => {
+const LoginLabel = styled.h3`
+    color: #5C5A5F;
+    font-size: 22px;
+`
+
+
+const Login = () => {
 
     const [credentials, setCredentials] = useState({username:'', password: ''});
     const dispatch = useDispatch();
@@ -40,21 +61,23 @@ const Login = (props) => {
         try{
             const user = await login(credentials);
             console.log(user.data)
-            dispatch(loginRedux(user.data));
+            dispatch(loginRedux({currentUser:user.data}));
         } catch(err){
             console.log(err)}
-
-
     }
 
     return(
         <Container>
-            <h1>Hola, {props.nombre}</h1>
-            <LoginForm onSubmit={(e) => handleSubmit(e)}>
-                <Input name='username' placeholder="username" onChange={e => handleChange(e)}/>
-                <Input name='password' type='password' placeholder="password" onChange={e => handleChange(e)}/>
-                <LoginButton className="btn btn-primary">Login</LoginButton>
-            </LoginForm>
+            <BgPhoto />
+            <LoginContainer>
+                <LoginForm onSubmit={(e) => handleSubmit(e)}>
+                    <LoginLabel>Usuario:</LoginLabel>
+                    <LoginInput name='username' placeholder="username" onChange={e => handleChange(e)}/>
+                    <LoginLabel>Contraseña:</LoginLabel>
+                    <LoginInput name='password' type='password' placeholder="password" onChange={e => handleChange(e)}/>
+                    <LoginButton type='submit' className='btn btn-secondary'>Ingresar</LoginButton>
+                </LoginForm>
+            </LoginContainer>
         </Container>
     )
 }

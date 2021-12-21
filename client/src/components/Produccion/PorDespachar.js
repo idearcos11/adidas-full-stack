@@ -1,6 +1,7 @@
 import styled from "styled-components"
 import * as api from '../../api/Produccion';
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const Container = styled.div`
     display: flex;
@@ -63,27 +64,49 @@ const SearchButton = styled.button`
         outline-width: 0;
     }
 `
+const Delete = styled.button``
 
 const PorDespachar = () => {
 
     const [ordenes, setOrdenes] = useState([]);
     const [query, setQuery] = useState('');
-    
+    const [filteredOrdenes, setFilteredOrdenes] = useState([]);
     
 
 
     const getOrdenes = async () => {
         try{
-            const res = await api.ordenesPorDespachar();
+            const res = await api.porDespachar();
             setOrdenes(res.data);
         } catch (err){console.log(err)}
     }
 
     getOrdenes();
 
+    const getFilteredOrdenes = async () => {
+        try{
+            const res = await api.filteredPorDespachar(query);
+            setFilteredOrdenes(res.data);
+        } catch (err){console.log(err)}
+    }
+
+    useEffect(() => {
+        getFilteredOrdenes()
+    }, [query])
+
+
     const handleCancel = (e) => {
         //cancelar orden
         //devolver materias
+    }
+
+    const handleDespachar = async (e) => {
+        const newStatus = {status:'Despachado'};
+        const id = e.target.id;
+        console.log(id);
+        try{
+            await api.updateOrden(id, newStatus);
+        } catch (err) {console.log(err)}
     }
 
     const mapping = (orden) => {
@@ -93,12 +116,18 @@ const PorDespachar = () => {
                 <Td>{orden.titulo}</Td>
                 <Td>{orden.status}</Td>
                 <Td>{orden.createdAt.slice(0,10)}</Td>
-                <Td><div style={{display: 'flex', justifyContent:'center', gap:'3px'}}><Button className="btn btn-primary" id={orden._id}>Ver</Button><Button className="btn btn-danger" id={orden._id}>Eliminar</Button></div></Td>
+                <Td><div style={{display: 'flex', justifyContent:'center', gap:'3px'}}><Link to={`/ordenes/${orden._id}`}><Button className="btn btn-primary" id={orden._id}>Ver</Button></Link> <Delete onClick={() => handleDelete(orden._id)} className="btn btn-danger" id={orden._id}>Cancelar</Delete><Button className="btn btn-success" id={orden._id} onClick={(e) => handleDespachar(e) }>Despachar</Button></div></Td>
             </Tr>
         )
     }
 
     const handleChange = e => setQuery(e.target.value);
+
+    const handleDelete = async id => {
+        try{
+            await api.deleteOrden(id);
+        } catch (err) {console.log(err)}
+    }
 
     return (
         <Container>
@@ -121,7 +150,7 @@ const PorDespachar = () => {
                         </Tr>
                     </thead>
                     <tbody>
-                        {ordenes.map(mapping)}                        
+                        {query? filteredOrdenes.map(mapping) : ordenes.map(mapping)}                        
                     </tbody>
                 </Table>   
             </TableContainer>   

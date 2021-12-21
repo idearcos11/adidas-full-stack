@@ -1,5 +1,5 @@
 import * as api from '../../api/Produccion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updatePanel } from '../../redux/reducers/updatePanel';
 import styled from 'styled-components';
@@ -89,13 +89,19 @@ const Disponible = () => {
       
 
     const [query, setQuery] = useState('');
-    const handleChange = e => setQuery(e.target.value);
+    const [materias, setMaterias] = useState([]);
+    const [filteredMaterias, setFilteredMaterias] = useState([]);
+
+    const handleChange = e => {
+        setQuery(e.target.value)
+        console.log(query);
+    };
 
     const dispatch = useDispatch()
 
     const {panel} = useSelector(state => state.updateP);
 
-    const [materias, setMaterias] = useState([]);
+    
 
     const getMaterias = async () => {
         try{
@@ -106,8 +112,22 @@ const Disponible = () => {
 
     getMaterias();
 
+    const getFilteredMaterias = async () => {
+        try{
+            const res = await api.fetchFilteredMaterias(query);
+            setFilteredMaterias(res.data);
+            console.log(filteredMaterias)
+        } catch (err){console.log(err)}
+    }
+
+    useEffect(() => {
+        console.log('hola')
+        getFilteredMaterias();
+    }, [query])
+
     const handleAgregar= async (e) => {
 
+        setQuery('');
         const id = e.target.id;
         
         let inList = false;
@@ -160,7 +180,7 @@ const Disponible = () => {
                         </Tr>
                     </thead>
                     <tbody>
-                        {materias.map(mapping)}
+                        {query ? filteredMaterias.map(mapping) : materias.map(mapping)}
                     </tbody>
                 </Table>
             </TableContainer>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import * as api from '../../api/Inventario';
 import {updateMateria, toggleClicked} from '../../redux/reducers/updateMateria';
@@ -65,11 +65,17 @@ const Th = styled.th`
 const Productos = () => {
 
     const [query, setQuery] = useState('');
+    const [materias, setMaterias] = useState([]);
+    const [filteredMaterias, setFilteredMaterias] = useState([]);
+
+
+
     const handleChange = e => setQuery(e.target.value);
+
 
     const dispatch = useDispatch();
 
-    const [materias, setMaterias] = useState([]);
+    
     const {dataToUpdate, clicked} = useSelector((state) => state.updateM)
 
     const getMateria = async () => {
@@ -80,6 +86,18 @@ const Productos = () => {
     }
 
     getMateria();
+
+    const getFilteredMaterias = async () => {
+        try{
+            const res = await api.fetchFilteredMaterias(query);
+            setFilteredMaterias(res.data);
+        } catch (err){console.log(err)}
+    }
+
+    useEffect(() => {
+        getFilteredMaterias();
+    }, [query])
+
 
     const handleClick = async e => {
         const id = e.target.id;
@@ -93,6 +111,7 @@ const Productos = () => {
     const handleEdit = async e => {
         const id = e.target.id;
         console.log(id);
+        setQuery('');
         try{
             const res = await api.fetchMateria(id);
             const data = res.data;
@@ -112,8 +131,8 @@ const Productos = () => {
                 <Td>{materia.amount}</Td>
                 <Td>{materia.price}</Td>
                 <Td>
-                    <Button id={materia._id} onClick={ e => handleEdit(e)}><ModeEditIcon /></Button>
-                    <Button id={materia._id} onClick={e => handleClick(e)}><DeleteIcon onClick={e => handleClick(e)}/></Button>
+                    <Button id={materia._id} onClick={ e => handleEdit(e)}>Editar</Button>
+                    <Button id={materia._id} onClick={e => handleClick(e)}>Eliminar</Button>
                 </Td>
             </tr>
         )
@@ -136,7 +155,7 @@ const Productos = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {materias.map(mapping)}
+                            {query ? filteredMaterias.map(mapping) :materias.map(mapping)}
                         </tbody>
                     </Table>
                 </TableContainer>

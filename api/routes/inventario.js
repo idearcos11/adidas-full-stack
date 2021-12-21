@@ -58,6 +58,16 @@ router.get('/materias', async (req, res) => {
     }
 });
 
+router.get('/materias/buscar/:query', async (req, res) => {
+    const query = req.params.query;
+    try {
+        const materias = await Materia.find({'name': {$regex: new RegExp(query, 'i')}});
+        res.status(200).json(materias);
+    } catch (err){
+        res.status(500).json(err);
+    }
+});
+
 //Mostrar una materia
 
 router.get('/materias/:id', async (req, res) => {
@@ -80,6 +90,9 @@ router.delete('/materias/:id', async (req, res)=> {
     }
 
 });
+
+
+
 
 
 

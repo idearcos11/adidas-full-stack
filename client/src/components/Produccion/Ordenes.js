@@ -1,6 +1,7 @@
 import styled from "styled-components"
 import * as api from '../../api/Produccion';
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const Container = styled.div`
     display: flex;
@@ -67,6 +68,7 @@ const SearchButton = styled.button`
 const Ordenes = () => {
 
     const [ordenes, setOrdenes] = useState([]);
+    const [filteredOrdenes, setFilteredOrdenes] = useState([])
     const [query, setQuery] = useState('');
     
     
@@ -74,12 +76,24 @@ const Ordenes = () => {
 
     const getOrdenes = async () => {
         try{
-            const res = await api.fetchOrdenes();
+            const res = await api.fetchOrdenes(query);
             setOrdenes(res.data);
         } catch (err){console.log(err)}
     }
 
     getOrdenes();
+
+    const getFilteredOrdenes = async () => {
+        try{
+            const res = await api.fetchFilteredOrdenes(query);
+            setFilteredOrdenes(res.data);
+        } catch(err) { console.log(err) }
+    }
+
+
+    useEffect(() => {
+        getFilteredOrdenes();
+    }, [query])
 
 
     const mapping = (orden) => {
@@ -89,7 +103,7 @@ const Ordenes = () => {
                 <Td>{orden.titulo}</Td>
                 <Td>{orden.status}</Td>
                 <Td>{orden.createdAt.slice(0,10)}</Td>
-                <Td name='acciones'>{orden.status === 'Despachado' ? <Button className="btn btn-primary" id={orden._id}>Ver</Button>: <div style={{display: 'flex', justifyContent:'center', gap:'3px'}}><Button className="btn btn-primary" id={orden._id}>Ver</Button><Button className="btn btn-danger" id={orden._id}>Eliminar</Button></div> }</Td>
+                <Td name='acciones'>{orden.status === 'Despachado' ? <Link to={`/ordenes/${orden._id}`}><Button className="btn btn-primary" id={orden._id}>Ver</Button></Link>: <div style={{display: 'flex', justifyContent:'center', gap:'3px'}}><Link to={`/ordenes/${orden._id}`}><Button className="btn btn-primary" id={orden._id}>Ver</Button></Link><Button className="btn btn-danger" id={orden._id}>Eliminar</Button></div> }</Td>
             </Tr>
         )
     }
@@ -103,7 +117,7 @@ const Ordenes = () => {
             </Title>
             <SearchContainer>
                 <Search onChange={e => handleChange(e)} value={query}/>
-                <SearchButton>Buscar</SearchButton>
+                <SearchButton onClick={() => console.log('hola')}>Buscar</SearchButton>
             </SearchContainer>
             <TableContainer>
                 <Table className="table table-hover">
@@ -117,7 +131,7 @@ const Ordenes = () => {
                         </Tr>
                     </thead>
                     <tbody>
-                        {ordenes.map(mapping)}                        
+                        {query ?  filteredOrdenes.map(mapping) : ordenes.map(mapping)}                        
                     </tbody>
                 </Table>   
             </TableContainer>   
