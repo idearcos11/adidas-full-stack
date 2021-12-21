@@ -96,7 +96,7 @@ app.use('/api/produccion', produccionRoute)
 
 
 
-app.listen(process.env.PORT || 5000, () => console.log(`Backend corriendo en el puerto ${process.env.PORT}`));
+app.listen(process.env.PORT || 8080, () => console.log(`Backend corriendo en el puerto ${process.env.PORT}`));
 
 module.exports = User;
 
